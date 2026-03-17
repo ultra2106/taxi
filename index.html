@@ -1,198 +1,454 @@
 <!DOCTYPE html>
 <html lang="ja">
-<!-- 領収書消しゴム - Receipt Eraser v1.0 -->
-<!-- GitHub Pages用 index.html -->
 <head>
 <meta charset="UTF-8">
-<title>領収書消しゴム</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>領収書消しゴム | Receipt Eraser</title>
 <style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --accent: #58a6ff;
+  --accent2: #f78166;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --radius: 10px;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #1a1a2e; color: #e0e0e0; font-family: Meiryo, 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Meiryo, sans-serif; overflow-x: hidden; }
+
+/* ─── NAV ─── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,17,23,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 56px;
+}
+.nav-logo { font-size: 17px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-links button {
+  background: none; border: none; color: var(--muted); font-size: 13px;
+  padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all .2s;
+}
+.nav-links button:hover, .nav-links button.active { background: var(--bg3); color: var(--text); }
+.nav-links button.active { color: var(--accent); }
+
+/* ─── PAGES ─── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── HERO ─── */
+#page-top {
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 20px; text-align: center; gap: 0;
+}
+.hero-badge {
+  background: rgba(88,166,255,.12); color: var(--accent);
+  border: 1px solid rgba(88,166,255,.3); border-radius: 20px;
+  font-size: 12px; padding: 4px 14px; margin-bottom: 24px; display: inline-block;
+}
+.hero-title { font-size: clamp(32px,6vw,64px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+.hero-title span { background: linear-gradient(135deg,#58a6ff,#bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-sub { font-size: 16px; color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 36px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 56px; }
+.btn-primary {
+  background: var(--accent); color: #0d1117; font-weight: 700;
+  border: none; border-radius: 8px; padding: 12px 28px; font-size: 15px; cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-primary:hover { opacity: .85; }
+.btn-outline {
+  background: none; color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 28px; font-size: 15px; cursor: pointer;
+  transition: background .2s;
+}
+.btn-outline:hover { background: var(--bg3); }
+
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; max-width: 860px; width: 100%; }
+.feat-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 22px; text-align: left; transition: border-color .2s;
+}
+.feat-card:hover { border-color: var(--accent); }
+.feat-icon { font-size: 28px; margin-bottom: 10px; }
+.feat-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.feat-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ─── GUIDE ─── */
+#page-guide { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+.guide-h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.guide-sub { color: var(--muted); font-size: 14px; margin-bottom: 36px; }
+.step-list { display: flex; flex-direction: column; gap: 0; }
+.step {
+  display: flex; gap: 20px; position: relative; padding-bottom: 32px;
+}
+.step:last-child { padding-bottom: 0; }
+.step-left { display: flex; flex-direction: column; align-items: center; }
+.step-num {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--accent);
+  color: #0d1117; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-line { width: 2px; flex: 1; background: var(--border); margin: 6px 0; }
+.step:last-child .step-line { display: none; }
+.step-body { flex: 1; padding-top: 6px; }
+.step-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.step-tip {
+  margin-top: 10px; background: rgba(88,166,255,.08); border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 12px; color: #aac8f0;
+}
+
+.kbd { display: inline-block; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: monospace; color: var(--text); }
+
+.mode-table { width: 100%; border-collapse: collapse; margin-top: 28px; font-size: 13px; }
+.mode-table th { background: var(--bg3); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+.mode-table td { padding: 10px 14px; border: 1px solid var(--border); line-height: 1.6; }
+.mode-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+.shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+.sc { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 12px; }
+.sc-key { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* ─── EDITOR ─── */
+#page-editor {
+  display: none; flex-direction: column; height: calc(100vh - 56px);
+}
+#page-editor.active { display: flex; }
 
 #toolbar {
-  background: #16213e; border-bottom: 2px solid #0f3460;
-  padding: 6px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 6px 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex-shrink: 0;
 }
-.tg { display: flex; align-items: center; gap: 4px; padding-right: 8px; border-right: 1px solid #0f3460; }
+.tg { display: flex; align-items: center; gap: 4px; padding-right: 8px; border-right: 1px solid var(--border); }
 .tg:last-child { border-right: none; }
-label { font-size: 11px; color: #aaa; }
-button {
-  background: #0f3460; color: #e0e0e0; border: 1px solid #1a4a8a;
-  border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 12px;
-  transition: background .15s;
+.tg label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.tbtn {
+  background: var(--bg3); color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px;
+  white-space: nowrap; transition: all .15s; position: relative;
 }
-button:hover { background: #1a5ab8; }
-button.active { background: #e94560; border-color: #ff6b8a; }
-button:disabled { opacity: .4; cursor: not-allowed; }
-input[type=range] { width: 70px; accent-color: #e94560; }
-.vb { background: #0f3460; border-radius: 3px; padding: 1px 5px; font-size: 11px; min-width: 26px; text-align: center; }
-#swatch { width: 22px; height: 22px; border-radius: 4px; border: 2px solid #555; display: none; }
+.tbtn:hover { background: #2d333b; border-color: var(--accent); }
+.tbtn.active { background: var(--accent2); border-color: #ff8070; color: #fff; }
+.tbtn:disabled { opacity: .35; cursor: not-allowed; }
+input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
+.vb { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 11px; min-width: 26px; text-align: center; }
+#swatch { width: 22px; height: 22px; border-radius: 4px; border: 2px solid var(--border); display: none; flex-shrink: 0; }
 
-#workspace { flex: 1; display: flex; overflow: hidden; position: relative; }
-
-#canvaswrap {
-  flex: 1; overflow: hidden; position: relative;
-  background: #111;
+/* tooltip */
+.tbtn[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: #000; color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 5px;
+  white-space: nowrap; pointer-events: none; z-index: 200;
 }
-#canvaswrap canvas { position: absolute; top: 0; left: 0; image-rendering: pixelated; }
+
+#workspace { flex: 1; display: flex; overflow: hidden; }
+#canvaswrap { flex: 1; overflow: hidden; position: relative; background: #080c10; }
+#canvaswrap canvas { position: absolute; top: 0; left: 0; }
 #cImg  { z-index: 1; }
 #cMask { z-index: 2; }
 #cUI   { z-index: 3; cursor: crosshair; }
 
+/* before/after panel */
+#baPanel {
+  width: 0; overflow: hidden; transition: width .3s; background: var(--bg2);
+  border-left: 1px solid var(--border); display: flex; flex-direction: column;
+  align-items: center; padding: 0; gap: 0;
+}
+#baPanel.open { width: 220px; padding: 12px 10px; gap: 10px; }
+.ba-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.ba-canvas { width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #000; }
+
 #dropzone {
   position: absolute; inset: 0; z-index: 10;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: rgba(10,15,40,.95); gap: 14px;
+  background: rgba(13,17,23,.97); gap: 16px;
 }
 #dropzone.hidden { display: none; }
-#dropzone .ico { font-size: 60px; }
-#dropzone p { font-size: 14px; color: #bbb; }
-#dropzone button { font-size: 14px; padding: 8px 24px; }
+#dropzone .ico { font-size: 64px; }
+#dropzone .dz-title { font-size: 20px; font-weight: 700; }
+#dropzone p { font-size: 13px; color: var(--muted); }
 
 #toast {
-  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,.75); color: #fff; padding: 4px 16px;
-  border-radius: 20px; font-size: 12px; pointer-events: none;
-  z-index: 30; opacity: 0; transition: opacity .3s;
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: rgba(22,27,34,.95); border: 1px solid var(--border); color: var(--text);
+  padding: 8px 20px; border-radius: 20px; font-size: 12px;
+  pointer-events: none; z-index: 300; opacity: 0; transition: opacity .3s;
+  backdrop-filter: blur(8px);
 }
 #toast.show { opacity: 1; }
 #zoominfo {
-  position: absolute; bottom: 10px; right: 10px;
-  background: rgba(0,0,0,.5); color: #aaa; font-size: 11px;
-  padding: 3px 8px; border-radius: 10px; pointer-events: none; z-index: 20;
+  position: absolute; bottom: 10px; right: 12px;
+  background: rgba(0,0,0,.6); color: var(--muted); font-size: 11px;
+  padding: 3px 10px; border-radius: 10px; pointer-events: none; z-index: 20;
+}
+#modeLabel {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.7); color: var(--accent); font-size: 12px; font-weight: 600;
+  padding: 4px 14px; border-radius: 20px; pointer-events: none; z-index: 20;
+  opacity: 0; transition: opacity .3s;
+}
+#modeLabel.show { opacity: 1; }
+
+/* save modal */
+#saveModal {
+  display: none; position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,.88); flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+}
+#saveModal.open { display: flex; }
+#saveModal p { font-size: 13px; color: var(--muted); }
+#saveModal img { max-width: 88vw; max-height: 72vh; border: 1px solid var(--border); border-radius: 8px; }
+.btn-close-modal {
+  background: var(--accent2); color: #fff; border: none; border-radius: 8px;
+  padding: 8px 28px; cursor: pointer; font-size: 13px; font-weight: 600;
 }
 </style>
 </head>
 <body>
 
-<div id="toolbar">
-  <div class="tg">
-    <button id="btnOpen">📂 開く</button>
-    <input type="file" id="fileInput" accept="image/*" style="display:none">
-    <button id="btnSave" disabled>💾 保存</button>
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">🧾 Receipt Eraser</div>
+  <div class="nav-links">
+    <button class="active" onclick="showPage('top',this)">🏠 トップ</button>
+    <button onclick="showPage('guide',this)">📖 使い方</button>
+    <button onclick="showPage('editor',this)">✏️ エディタ</button>
   </div>
-  <div class="tg">
-    <label>モード:</label>
-    <button id="btnBrush" class="active">🖌 ブラシ</button>
-    <button id="btnPick">🎨 色抽出</button>
-    <button id="btnFill">🪣 塗り</button>
-    <div id="swatch" title="抽出色"></div>
+</nav>
+
+<!-- ─── TOP PAGE ─── -->
+<div id="page-top" class="page active">
+  <div class="hero-badge">✨ 無料・登録不要・画像はサーバーに送信されません</div>
+  <h1 class="hero-title">領収書の個人情報を<br><span>かんたんに消せる</span></h1>
+  <p class="hero-sub">タクシー・飲食店などの領収書をブラウザ上で編集。車両番号・日時・金額など、見せたくない部分をサッと消去できます。</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="showPage('editor')">✏️ いますぐ使う</button>
+    <button class="btn-outline" onclick="showPage('guide')">📖 使い方を見る</button>
   </div>
-  <div class="tg">
-    <label>ブラシ:</label>
-    <input type="range" id="slBrush" min="2" max="120" value="18">
-    <span class="vb" id="vBrush">18</span>
-  </div>
-  <div class="tg">
-    <label>半径:</label>
-    <input type="range" id="slRadius" min="1" max="60" value="5">
-    <span class="vb" id="vRadius">5</span>
-    <button id="btnMethod">TELEA</button>
-    <button id="btnInpaint" disabled>🔮 Inpaint</button>
-  </div>
-  <div class="tg">
-    <button id="btnPaperFill" disabled>📄 紙色塗り</button>
-    <button id="btnPickFill" disabled>🎨色塗り</button>
-    <button id="btnUndo" disabled>↩ Undo</button>
-    <button id="btnReset" disabled>🗑 リセット</button>
-  </div>
-  <div class="tg">
-    <button id="btnFit" disabled>⊡ Fit</button>
-    <button id="btn100" disabled>100%</button>
+  <div class="feature-grid">
+    <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-title">完全ローカル処理</div><div class="feat-desc">画像はサーバーに送信されません。すべてブラウザ内で完結します。</div></div>
+    <div class="feat-card"><div class="feat-icon">🖌</div><div class="feat-title">ブラシで直感編集</div><div class="feat-desc">消したい部分をなぞるだけ。ズーム・アンドゥにも対応しています。</div></div>
+    <div class="feat-card"><div class="feat-icon">🎨</div><div class="feat-title">色抽出＆塗りつぶし</div><div class="feat-desc">背景色を自動検出して自然に消去。手動で色を指定することも可能。</div></div>
+    <div class="feat-card"><div class="feat-icon">🔮</div><div class="feat-title">Inpaint補完</div><div class="feat-desc">周囲のピクセルから自動補完。より自然な仕上がりになります。</div></div>
   </div>
 </div>
 
-<div id="workspace">
-  <div id="canvaswrap">
-    <canvas id="cImg"></canvas>
-    <canvas id="cMask"></canvas>
-    <canvas id="cUI"></canvas>
+<!-- ─── GUIDE PAGE ─── -->
+<div id="page-guide" class="page">
+  <div style="max-width:820px;margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:8px">📖 使い方ガイド</h1>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:36px">Step by Step で説明します。</p>
 
-    <div id="dropzone">
-      <div class="ico">🧾</div>
-      <p>画像をここにドロップ</p>
-      <p style="font-size:12px;color:#555">または</p>
-      <button id="btnOpen2">📂 ファイルを選択</button>
+    <div class="step-list">
+      <div class="step">
+        <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">画像を開く</div>
+          <div class="step-desc">「✏️ エディタ」ページを開き、領収書画像をドラッグ＆ドロップするか「📂 開く」ボタンで選択します。<br>PNG・JPG・BMP などほとんどの形式に対応しています。</div>
+          <div class="step-tip">💡 スマホでも使えます！カメラロールから選択できます。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">消したい部分をブラシで塗る</div>
+          <div class="step-desc">🖌 ブラシモードで、消したい文字や数字の上を<b>左ドラッグ</b>して赤く塗ります。<br>塗り間違えたら<b>右ドラッグ</b>で消せます。ブラシサイズはスライダーで調整できます。</div>
+          <div class="step-tip">💡 ホイールでズームイン→拡大して細かく塗る と綺麗に仕上がります。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">消去方法を選ぶ</div>
+          <div class="step-desc">塗った後、以下の3つの方法で消去できます。</div>
+          <table class="mode-table" style="margin-top:12px">
+            <tr><th>ボタン</th><th>方法</th><th>おすすめシーン</th></tr>
+            <tr><td>📄 紙色塗り</td><td>背景色を自動検出して塗りつぶし</td><td>白背景の領収書（一番綺麗）</td></tr>
+            <tr><td>🔮 Inpaint</td><td>周囲ピクセルから自動補完</td><td>模様・グラデーション背景</td></tr>
+            <tr><td>🎨 色抽出→塗り</td><td>指定色で塗りつぶし</td><td>特定の色で均一に消したい時</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">保存する</div>
+          <div class="step-desc">「💾 保存」ボタンを押すと画像のプレビューが表示されます。<br>画像を<b>右クリック →「名前を付けて画像を保存」</b>でPNGとして保存できます。</div>
+          <div class="step-tip">⚠️ ブラウザの制限でダウンロードボタンは使えません。右クリック保存をご利用ください。</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="font-size:18px;font-weight:700;margin:48px 0 14px">⌨️ キーボードショートカット</h2>
+    <div class="shortcut-grid">
+      <div class="sc"><div class="sc-key"><span class="kbd">B</span></div>ブラシモード</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">P</span></div>色抽出モード</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">G</span></div>塗りつぶしモード</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">I</span></div>Inpaintプレビュー</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">Enter</span></div>Inpaint確定</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">F</span></div>紙色で塗りつぶし</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">Ctrl</span><span class="kbd">Z</span></div>Undo</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">R</span></div>マスクリセット</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">[</span><span class="kbd">]</span></div>ブラシサイズ変更</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">0</span></div>全体表示</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">1</span></div>100%表示</div>
+      <div class="sc"><div class="sc-key"><span class="kbd">M</span></div>Inpaint方式切替</div>
     </div>
   </div>
 </div>
 
+<!-- ─── EDITOR PAGE ─── -->
+<div id="page-editor" class="page">
+
+  <div id="toolbar">
+    <div class="tg">
+      <button class="tbtn" id="btnOpen" data-tip="画像を開く">📂 開く</button>
+      <input type="file" id="fileInput" accept="image/*" style="display:none">
+      <button class="tbtn" id="btnSave" disabled data-tip="保存プレビューを表示">💾 保存</button>
+      <button class="tbtn" id="btnBA" disabled data-tip="Before/After 比較">↔ 比較</button>
+    </div>
+    <div class="tg">
+      <label>モード:</label>
+      <button class="tbtn active" id="btnBrush" data-tip="ブラシ塗り (B)">🖌 ブラシ</button>
+      <button class="tbtn" id="btnPick" data-tip="ROIで色抽出 (P)">🎨 色抽出</button>
+      <button class="tbtn" id="btnFill" data-tip="ROIを抽出色で塗る (G)">🪣 塗り</button>
+      <div id="swatch" title="抽出色"></div>
+    </div>
+    <div class="tg">
+      <label>ブラシ:</label>
+      <input type="range" id="slBrush" min="2" max="120" value="18">
+      <span class="vb" id="vBrush">18</span>
+    </div>
+    <div class="tg">
+      <label>半径:</label>
+      <input type="range" id="slRadius" min="1" max="60" value="5">
+      <span class="vb" id="vRadius">5</span>
+      <button class="tbtn" id="btnMethod" data-tip="Inpaint方式切替 (M)">TELEA</button>
+      <button class="tbtn" id="btnInpaint" disabled data-tip="Inpaintプレビュー (I)">🔮 Inpaint</button>
+    </div>
+    <div class="tg">
+      <button class="tbtn" id="btnPaperFill" disabled data-tip="背景色を自動検出して塗りつぶし (F)">📄 紙色塗り</button>
+      <button class="tbtn" id="btnPickFill" disabled data-tip="抽出色で塗りつぶし (K)">🎨 色塗り</button>
+      <button class="tbtn" id="btnUndo" disabled data-tip="元に戻す (Ctrl+Z)">↩ Undo</button>
+      <button class="tbtn" id="btnReset" disabled data-tip="マスクリセット (R)">🗑</button>
+    </div>
+    <div class="tg">
+      <button class="tbtn" id="btnFit" disabled data-tip="全体表示 (0)">⊡ Fit</button>
+      <button class="tbtn" id="btn100" disabled data-tip="100%表示 (1)">100%</button>
+    </div>
+  </div>
+
+  <div id="workspace">
+    <div id="canvaswrap">
+      <canvas id="cImg"></canvas>
+      <canvas id="cMask"></canvas>
+      <canvas id="cUI"></canvas>
+      <div id="modeLabel"></div>
+      <div id="zoominfo">—</div>
+      <div id="dropzone">
+        <div class="ico">🧾</div>
+        <div class="dz-title">画像をドロップ</div>
+        <p>または</p>
+        <button class="btn-primary" id="btnOpen2" style="font-size:14px;padding:10px 28px">📂 ファイルを選択</button>
+        <p style="font-size:11px;margin-top:8px">PNG / JPG / BMP 対応</p>
+      </div>
+    </div>
+    <div id="baPanel">
+      <div class="ba-label">Before</div>
+      <canvas class="ba-canvas" id="cBefore"></canvas>
+      <div class="ba-label">After</div>
+      <canvas class="ba-canvas" id="cAfter"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- save modal -->
+<div id="saveModal">
+  <p>右クリック →「名前を付けて画像を保存」で保存できます</p>
+  <img id="savePreviewImg" alt="preview">
+  <button class="btn-close-modal" onclick="document.getElementById('saveModal').classList.remove('open')">✕ 閉じる</button>
+</div>
+
 <div id="toast"></div>
-<div id="zoominfo">—</div>
 
 <script>
+// ─── Page nav ───
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    const idx = {top:0,guide:1,editor:2}[id];
+    if (idx !== undefined) document.querySelectorAll('.nav-links button')[idx].classList.add('active');
+  }
+  document.getElementById('page-' + id).scrollIntoView({behavior: 'smooth'});
+}
+
 // ─── State ───
 const S = {
-  srcCanvas: null,   // オリジナルデータを保持するOffscreenCanvas
-  workCanvas: null,  // 編集中データ
+  workCanvas: null, origCanvas: null,
   W: 0, H: 0,
-  mask: null,        // Uint8Array
-  previewData: null, // inpaint結果 ImageData
-
-  mode: 'brush',
-  brushSize: 18,
-  ipRadius: 5,
-  ipMethod: 'telea',
+  mask: null, previewData: null,
+  mode: 'brush', brushSize: 18, ipRadius: 5, ipMethod: 'telea',
   pickedColor: null,
-
-  drawing: false,
-  erasing: false,
-  lastPt: null,
-
-  roiDrag: false,
-  roiStart: null,
-  roiEnd: null,
-
-  zoom: 1,
-  vx: 0, vy: 0,
-  panStart: null,
-
-  undoStack: [],
-  MAXUNDO: 30,
+  drawing: false, erasing: false, lastPt: null,
+  roiDrag: false, roiStart: null, roiEnd: null,
+  zoom: 1, vx: 0, vy: 0, panStart: null,
+  undoStack: [], MAXUNDO: 30,
+  baOpen: false,
 };
 
 // ─── DOM ───
-const wrap     = document.getElementById('canvaswrap');
-const cImg     = document.getElementById('cImg');
-const cMask    = document.getElementById('cMask');
-const cUI      = document.getElementById('cUI');
-const ctxImg   = cImg.getContext('2d');
-const ctxMask  = cMask.getContext('2d');
-const ctxUI    = cUI.getContext('2d');
+const wrap = document.getElementById('canvaswrap');
+const cImg = document.getElementById('cImg');
+const cMask = document.getElementById('cMask');
+const cUI  = document.getElementById('cUI');
+const ctxImg  = cImg.getContext('2d');
+const ctxMask = cMask.getContext('2d');
+const ctxUI   = cUI.getContext('2d');
+const cBefore = document.getElementById('cBefore');
+const cAfter  = document.getElementById('cAfter');
 
 // ─── Toast ───
-let toastTmr;
+let tTmr;
 function toast(msg, dur=2500) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTmr);
-  toastTmr = setTimeout(() => el.classList.remove('show'), dur);
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(tTmr); tTmr = setTimeout(() => el.classList.remove('show'), dur);
 }
 
-// ─── Load image ───
+let mlTmr;
+function showModeLabel(msg) {
+  const el = document.getElementById('modeLabel');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(mlTmr); mlTmr = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ─── Load ───
 function loadFile(file) {
   if (!file || !file.type.startsWith('image/')) return;
   const reader = new FileReader();
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
-      S.W = img.naturalWidth;
-      S.H = img.naturalHeight;
-
+      S.W = img.naturalWidth; S.H = img.naturalHeight;
       S.workCanvas = new OffscreenCanvas(S.W, S.H);
       S.workCanvas.getContext('2d').drawImage(img, 0, 0);
-
+      S.origCanvas = new OffscreenCanvas(S.W, S.H);
+      S.origCanvas.getContext('2d').drawImage(img, 0, 0);
       S.mask = new Uint8Array(S.W * S.H);
-      S.undoStack = [];
-      S.previewData = null;
-      S.pickedColor = null;
+      S.undoStack = []; S.previewData = null; S.pickedColor = null;
       updateSwatch();
-
       document.getElementById('dropzone').classList.add('hidden');
-      fitView();
-      renderAll();
-      updateBtns();
+      fitView(); renderAll(); updateBtns();
       toast(`読み込み完了: ${S.W}×${S.H}`);
     };
     img.onerror = () => toast('画像の読み込みに失敗しました');
@@ -203,432 +459,300 @@ function loadFile(file) {
 }
 
 // ─── Zoom/Pan ───
-function getScale() {
-  const cropW = wrap.clientWidth / S.zoom;
-  return wrap.clientWidth / cropW;
-}
+// scale = 表示ピクセル / 画像ピクセル
+function sc() { return S.zoom; }
 function clamp() {
-  const cropW = wrap.clientWidth  / S.zoom;
-  const cropH = wrap.clientHeight / S.zoom;
-  S.vx = Math.max(0, Math.min(S.vx, Math.max(0, S.W - cropW)));
-  S.vy = Math.max(0, Math.min(S.vy, Math.max(0, S.H - cropH)));
+  const cw = wrap.clientWidth / S.zoom, ch = wrap.clientHeight / S.zoom;
+  S.vx = Math.max(0, Math.min(S.vx, Math.max(0, S.W - cw)));
+  S.vy = Math.max(0, Math.min(S.vy, Math.max(0, S.H - ch)));
 }
 function fitView() {
   S.zoom = Math.min(wrap.clientWidth / S.W, wrap.clientHeight / S.H, 1);
   S.vx = 0; S.vy = 0; clamp();
 }
 function s2i(sx, sy) {
-  const sc = getScale();
-  return [
-    Math.max(0, Math.min(S.W-1, Math.floor(S.vx + sx / sc))),
-    Math.max(0, Math.min(S.H-1, Math.floor(S.vy + sy / sc))),
-  ];
+  const s = sc();
+  return [Math.max(0,Math.min(S.W-1,Math.floor(S.vx+sx/s))), Math.max(0,Math.min(S.H-1,Math.floor(S.vy+sy/s)))];
 }
-function i2s(ix, iy) {
-  const sc = getScale();
-  return [(ix - S.vx) * sc, (iy - S.vy) * sc];
-}
+function i2s(ix, iy) { const s=sc(); return [(ix-S.vx)*s,(iy-S.vy)*s]; }
 function zoomAt(sx, sy, f) {
-  const [ix, iy] = s2i(sx, sy);
-  S.zoom = Math.max(0.05, Math.min(30, S.zoom * f));
+  const [ix,iy]=s2i(sx,sy);
+  S.zoom = Math.max(0.05, Math.min(30, S.zoom*f));
   clamp();
-  const sc = getScale();
-  S.vx = ix - sx / sc;
-  S.vy = iy - sy / sc;
-  clamp();
+  const s=sc(); S.vx=ix-sx/s; S.vy=iy-sy/s; clamp();
 }
 
 // ─── Render ───
 function renderAll() {
   if (!S.workCanvas) return;
-  const dw = wrap.clientWidth, dh = wrap.clientHeight;
-
-  // キャンバスサイズをウィンドウに合わせる
-  [cImg, cMask, cUI].forEach(c => { c.width = dw; c.height = dh; });
+  const dw=wrap.clientWidth, dh=wrap.clientHeight;
+  [cImg,cMask,cUI].forEach(c=>{c.width=dw;c.height=dh;});
   clamp();
+  const s=sc(), cw=dw/S.zoom, ch=dh/S.zoom;
 
-  const sc = getScale();
-  const cropW = dw / S.zoom;
-  const cropH = dh / S.zoom;
-
-  // ── 画像 ──
-  ctxImg.clearRect(0, 0, dw, dh);
+  ctxImg.clearRect(0,0,dw,dh);
   ctxImg.imageSmoothingEnabled = S.zoom < 2;
+  const src = S.previewData ? pidCanvas(S.previewData) : S.workCanvas;
+  ctxImg.drawImage(src, S.vx, S.vy, cw, ch, 0, 0, dw, dh);
 
-  const src = S.previewData ? previewCanvas() : S.workCanvas;
-  ctxImg.drawImage(src, S.vx, S.vy, cropW, cropH, 0, 0, dw, dh);
-
-  // ── マスク ──
-  ctxMask.clearRect(0, 0, dw, dh);
+  ctxMask.clearRect(0,0,dw,dh);
   if (!S.previewData) {
-    const mOC = maskCanvas();
     ctxMask.globalAlpha = 0.5;
-    ctxMask.drawImage(mOC, S.vx, S.vy, cropW, cropH, 0, 0, dw, dh);
+    ctxMask.drawImage(maskCanvas(), S.vx, S.vy, cw, ch, 0, 0, dw, dh);
     ctxMask.globalAlpha = 1;
   }
 
-  // ── UI ──
-  ctxUI.clearRect(0, 0, dw, dh);
-  if (S.mode !== 'brush' && S.roiStart && S.roiEnd) {
-    const [x0, y0] = i2s(...S.roiStart);
-    const [x1, y1] = i2s(...S.roiEnd);
-    ctxUI.strokeStyle = S.mode === 'pick' ? '#00f0f0' : '#f000f0';
-    ctxUI.lineWidth = 1.5;
-    ctxUI.setLineDash([5, 3]);
-    ctxUI.strokeRect(x0, y0, x1 - x0, y1 - y0);
-    ctxUI.setLineDash([]);
+  ctxUI.clearRect(0,0,dw,dh);
+  if (S.mode!=='brush'&&S.roiStart&&S.roiEnd) {
+    const [x0,y0]=i2s(...S.roiStart),[x1,y1]=i2s(...S.roiEnd);
+    ctxUI.strokeStyle=S.mode==='pick'?'#00f0f0':'#f060f0';
+    ctxUI.lineWidth=1.5; ctxUI.setLineDash([5,3]);
+    ctxUI.strokeRect(x0,y0,x1-x0,y1-y0); ctxUI.setLineDash([]);
   }
 
-  document.getElementById('zoominfo').textContent =
-    `${Math.round(S.zoom * 100)}%  ${S.W}×${S.H}`;
+  document.getElementById('zoominfo').textContent=`${Math.round(S.zoom*100)}%  ${S.W}×${S.H}`;
+  if (S.baOpen) updateBA();
 }
 
-function previewCanvas() {
-  const oc = new OffscreenCanvas(S.W, S.H);
-  oc.getContext('2d').putImageData(S.previewData, 0, 0);
-  return oc;
-}
+function pidCanvas(pid) { const oc=new OffscreenCanvas(S.W,S.H); oc.getContext('2d').putImageData(pid,0,0); return oc; }
 function maskCanvas() {
-  const oc = new OffscreenCanvas(S.W, S.H);
-  const ctx = oc.getContext('2d');
-  const id = ctx.createImageData(S.W, S.H);
-  const d = id.data;
-  S.mask.forEach((v, i) => {
-    if (v) { d[i*4]=255; d[i*4+1]=50; d[i*4+2]=50; d[i*4+3]=200; }
-  });
-  ctx.putImageData(id, 0, 0);
-  return oc;
+  const oc=new OffscreenCanvas(S.W,S.H), ctx=oc.getContext('2d');
+  const id=ctx.createImageData(S.W,S.H);
+  S.mask.forEach((v,i)=>{ if(v){id.data[i*4]=255;id.data[i*4+1]=50;id.data[i*4+2]=50;id.data[i*4+3]=200;} });
+  ctx.putImageData(id,0,0); return oc;
+}
+
+// ─── Before/After ───
+function updateBA() {
+  const tw = cBefore.parentElement.clientWidth - 20;
+  const th = Math.round(tw * S.H / S.W);
+  [cBefore,cAfter].forEach(c=>{c.width=tw;c.height=th;});
+  cBefore.getContext('2d').drawImage(S.origCanvas,0,0,tw,th);
+  cAfter.getContext('2d').drawImage(S.workCanvas,0,0,tw,th);
 }
 
 // ─── Undo ───
 function pushUndo() {
   S.undoStack.push(S.mask.slice());
-  if (S.undoStack.length > S.MAXUNDO) S.undoStack.shift();
+  if(S.undoStack.length>S.MAXUNDO) S.undoStack.shift();
   updateBtns();
 }
 function undo() {
-  if (!S.undoStack.length) return;
-  S.mask = S.undoStack.pop();
-  S.previewData = null;
-  renderAll(); updateBtns();
+  if(!S.undoStack.length) return;
+  S.mask=S.undoStack.pop(); S.previewData=null; renderAll(); updateBtns();
 }
 
 // ─── Brush ───
-function paintMask(x0, y0, x1, y1, erase) {
-  const r = S.brushSize;
-  const val = erase ? 0 : 255;
-  const dx = x1-x0, dy = y1-y0;
-  const steps = Math.max(1, Math.ceil(Math.hypot(dx, dy)));
-  for (let s = 0; s <= steps; s++) {
-    const t = s / steps;
-    const cx = Math.round(x0 + dx * t), cy = Math.round(y0 + dy * t);
-    for (let py = cy-r; py <= cy+r; py++) {
-      for (let px = cx-r; px <= cx+r; px++) {
-        if ((px-cx)**2+(py-cy)**2 <= r*r && px>=0 && py>=0 && px<S.W && py<S.H)
-          S.mask[py*S.W+px] = val;
-      }
-    }
+function paintMask(x0,y0,x1,y1,erase) {
+  const r=S.brushSize, val=erase?0:255;
+  const dx=x1-x0,dy=y1-y0, steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)));
+  for(let s=0;s<=steps;s++){
+    const t=s/steps, cx=Math.round(x0+dx*t), cy=Math.round(y0+dy*t);
+    for(let py=cy-r;py<=cy+r;py++) for(let px=cx-r;px<=cx+r;px++)
+      if((px-cx)**2+(py-cy)**2<=r*r&&px>=0&&py>=0&&px<S.W&&py<S.H)
+        S.mask[py*S.W+px]=val;
   }
 }
 
 // ─── Color ───
-function medianRGB(pixels) {
-  if (!pixels.length) return {r:200,g:200,b:200};
+function medRGB(px){
+  if(!px.length)return{r:200,g:200,b:200};
   const rs=[],gs=[],bs=[];
-  pixels.forEach(p=>{rs.push(p.r);gs.push(p.g);bs.push(p.b);});
-  rs.sort((a,b)=>a-b); gs.sort((a,b)=>a-b); bs.sort((a,b)=>a-b);
-  const m = rs.length>>1;
-  return {r:rs[m],g:gs[m],b:bs[m]};
+  px.forEach(p=>{rs.push(p.r);gs.push(p.g);bs.push(p.b);});
+  [rs,gs,bs].forEach(a=>a.sort((a,b)=>a-b));
+  const m=rs.length>>1; return{r:rs[m],g:gs[m],b:bs[m]};
 }
+function getWID(){ return S.workCanvas.getContext('2d').getImageData(0,0,S.W,S.H); }
+function putWID(id){ S.workCanvas.getContext('2d').putImageData(id,0,0); }
 
-function getWorkImageData() {
-  return S.workCanvas.getContext('2d').getImageData(0, 0, S.W, S.H);
-}
-function putWorkImageData(id) {
-  S.workCanvas.getContext('2d').putImageData(id, 0, 0);
-}
-
-function roiRect() {
-  if (!S.roiStart || !S.roiEnd) return null;
-  let [x0,y0]=S.roiStart, [x1,y1]=S.roiEnd;
+function roiRect(){
+  if(!S.roiStart||!S.roiEnd)return null;
+  let[x0,y0]=S.roiStart,[x1,y1]=S.roiEnd;
   [x0,x1]=[Math.min(x0,x1),Math.max(x0,x1)];
   [y0,y1]=[Math.min(y0,y1),Math.max(y0,y1)];
-  x0=Math.max(0,x0); y0=Math.max(0,y0);
-  x1=Math.min(S.W,x1); y1=Math.min(S.H,y1);
-  return (x1-x0<2||y1-y0<2) ? null : [x0,y0,x1,y1];
+  x0=Math.max(0,x0);y0=Math.max(0,y0);x1=Math.min(S.W,x1);y1=Math.min(S.H,y1);
+  return(x1-x0<2||y1-y0<2)?null:[x0,y0,x1,y1];
 }
-
-function pickColor() {
-  const r = roiRect(); if (!r) { toast('範囲が小さすぎます'); return; }
-  const [x0,y0,x1,y1] = r;
-  const id = getWorkImageData();
-  const px = [];
-  for (let y=y0;y<y1;y++) for (let x=x0;x<x1;x++) {
-    const i=(y*S.W+x)*4;
-    px.push({r:id.data[i],g:id.data[i+1],b:id.data[i+2]});
-  }
-  S.pickedColor = medianRGB(px);
-  updateSwatch();
+function pickColor(){
+  const r=roiRect();if(!r){toast('範囲が小さすぎます');return;}
+  const[x0,y0,x1,y1]=r, id=getWID(), px=[];
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*S.W+x)*4;px.push({r:id.data[i],g:id.data[i+1],b:id.data[i+2]});}
+  S.pickedColor=medRGB(px); updateSwatch();
   toast(`色抽出: rgb(${S.pickedColor.r},${S.pickedColor.g},${S.pickedColor.b})`);
 }
-
-function fillROI() {
-  if (!S.pickedColor) { toast('先に🎨色抽出をしてください'); return; }
-  const r = roiRect(); if (!r) { toast('範囲が小さすぎます'); return; }
-  const [x0,y0,x1,y1]=r;
-  const id = getWorkImageData();
-  const {r:rr,g,b}=S.pickedColor;
-  for (let y=y0;y<y1;y++) for (let x=x0;x<x1;x++) {
-    const i=(y*S.W+x)*4;
-    id.data[i]=rr; id.data[i+1]=g; id.data[i+2]=b; id.data[i+3]=255;
-  }
-  putWorkImageData(id);
-  S.previewData=null; renderAll(); toast('塗りつぶしました');
+function fillROI(){
+  if(!S.pickedColor){toast('先に🎨色抽出をしてください');return;}
+  const r=roiRect();if(!r){toast('範囲が小さすぎます');return;}
+  const[x0,y0,x1,y1]=r, id=getWID(), {r:rr,g,b}=S.pickedColor;
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*S.W+x)*4;id.data[i]=rr;id.data[i+1]=g;id.data[i+2]=b;id.data[i+3]=255;}
+  putWID(id); S.previewData=null; renderAll(); toast('塗りつぶしました');
 }
-
-function fillPaper() {
-  if (!S.mask.some(v=>v)) { toast('マスクが空です'); return; }
-  const id = getWorkImageData();
-  const px=[];
-  S.mask.forEach((v,i)=>{ if(!v) px.push({r:id.data[i*4],g:id.data[i*4+1],b:id.data[i*4+2]}); });
-  const {r,g,b}=medianRGB(px);
-  S.mask.forEach((v,i)=>{
-    if(v){id.data[i*4]=r;id.data[i*4+1]=g;id.data[i*4+2]=b;id.data[i*4+3]=255;}
-  });
-  putWorkImageData(id);
-  S.mask.fill(0); S.previewData=null; S.undoStack=[];
+function fillPaper(){
+  if(!S.mask.some(v=>v)){toast('マスクが空です');return;}
+  const id=getWID(), px=[];
+  S.mask.forEach((v,i)=>{if(!v)px.push({r:id.data[i*4],g:id.data[i*4+1],b:id.data[i*4+2]});});
+  const{r,g,b}=medRGB(px);
+  S.mask.forEach((v,i)=>{if(v){id.data[i*4]=r;id.data[i*4+1]=g;id.data[i*4+2]=b;id.data[i*4+3]=255;}});
+  putWID(id); S.mask.fill(0); S.previewData=null; S.undoStack=[];
   renderAll(); updateBtns(); toast(`紙色(${r},${g},${b})で塗りつぶしました`);
 }
-
-function fillPicked() {
-  if (!S.pickedColor) { toast('先に🎨色抽出をしてください'); return; }
-  if (!S.mask.some(v=>v)) { toast('マスクが空です'); return; }
-  const id = getWorkImageData();
-  const {r,g,b}=S.pickedColor;
-  S.mask.forEach((v,i)=>{
-    if(v){id.data[i*4]=r;id.data[i*4+1]=g;id.data[i*4+2]=b;id.data[i*4+3]=255;}
-  });
-  putWorkImageData(id);
-  S.mask.fill(0); S.previewData=null; S.undoStack=[];
+function fillPicked(){
+  if(!S.pickedColor){toast('先に🎨色抽出をしてください');return;}
+  if(!S.mask.some(v=>v)){toast('マスクが空です');return;}
+  const id=getWID(), {r,g,b}=S.pickedColor;
+  S.mask.forEach((v,i)=>{if(v){id.data[i*4]=r;id.data[i*4+1]=g;id.data[i*4+2]=b;id.data[i*4+3]=255;}});
+  putWID(id); S.mask.fill(0); S.previewData=null; S.undoStack=[];
   renderAll(); updateBtns(); toast('抽出色で塗りつぶしました');
 }
 
 // ─── Inpaint ───
-function doInpaint() {
-  if (!S.mask.some(v=>v)) { toast('マスクが空です'); return; }
-  toast('Inpaint計算中…', 8000);
-  setTimeout(() => {
-    const id = getWorkImageData();
-    const d = new Uint8ClampedArray(id.data);
-    const W=S.W, H=S.H, R=Math.max(3,S.ipRadius);
-    const passes = S.ipMethod==='ns' ? 3 : 2;
-    let cur = new Uint8ClampedArray(d);
-    for (let p=0;p<passes;p++) {
-      const nxt = new Uint8ClampedArray(cur);
-      for (let y=0;y<H;y++) for (let x=0;x<W;x++) {
-        if (!S.mask[y*W+x]) continue;
+function doInpaint(){
+  if(!S.mask.some(v=>v)){toast('マスクが空です');return;}
+  toast('Inpaint計算中…',8000);
+  setTimeout(()=>{
+    const id=getWID(), d=new Uint8ClampedArray(id.data);
+    const W=S.W,H=S.H,R=Math.max(3,S.ipRadius), passes=S.ipMethod==='ns'?3:2;
+    let cur=new Uint8ClampedArray(d);
+    for(let p=0;p<passes;p++){
+      const nxt=new Uint8ClampedArray(cur);
+      for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+        if(!S.mask[y*W+x])continue;
         let sr=0,sg=0,sb=0,sw=0;
-        for (let dy=-R;dy<=R;dy++) for (let dx=-R;dx<=R;dx++) {
+        for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){
           const nx=x+dx,ny=y+dy;
-          if(nx<0||ny<0||nx>=W||ny>=H||S.mask[ny*W+nx]) continue;
-          const d2=dx*dx+dy*dy; if(d2>R*R) continue;
-          const w=1/(d2+1e-6), i=(ny*W+nx)*4;
-          sr+=cur[i]*w; sg+=cur[i+1]*w; sb+=cur[i+2]*w; sw+=w;
+          if(nx<0||ny<0||nx>=W||ny>=H||S.mask[ny*W+nx])continue;
+          const d2=dx*dx+dy*dy; if(d2>R*R)continue;
+          const w=1/(d2+1e-6),i=(ny*W+nx)*4;
+          sr+=cur[i]*w;sg+=cur[i+1]*w;sb+=cur[i+2]*w;sw+=w;
         }
         if(sw>0){const i=(y*W+x)*4;nxt[i]=sr/sw;nxt[i+1]=sg/sw;nxt[i+2]=sb/sw;nxt[i+3]=255;}
       }
       cur=nxt;
     }
-    const out = new ImageData(cur, W, H);
-    S.previewData = out;
-    renderAll();
-    toast('プレビュー表示中 — Enter で確定', 6000);
-  }, 30);
+    S.previewData=new ImageData(cur,W,H);
+    renderAll(); toast('プレビュー表示中 — Enter で確定',6000);
+  },30);
 }
-
-function applyInpaint() {
-  if (!S.previewData) return;
-  putWorkImageData(S.previewData);
-  S.previewData=null; S.mask.fill(0); S.undoStack=[];
+function applyInpaint(){
+  if(!S.previewData)return;
+  putWID(S.previewData); S.previewData=null; S.mask.fill(0); S.undoStack=[];
   renderAll(); updateBtns(); toast('確定しました');
 }
 
 // ─── Save ───
-function saveImg() {
-  const oc = document.createElement('canvas');
-  oc.width = S.W; oc.height = S.H;
-  oc.getContext('2d').drawImage(S.workCanvas, 0, 0);
-  const dataUrl = oc.toDataURL('image/png');
-
-  // モーダル表示
-  let modal = document.getElementById('saveModal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'saveModal';
-    modal.style.cssText = `
-      position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-    `;
-    modal.innerHTML = `
-      <p style="color:#eee;font-size:13px;font-family:sans-serif">
-        画像を右クリック →「名前を付けて画像を保存」で保存できます
-      </p>
-      <img id="savePreviewImg" style="max-width:90vw;max-height:75vh;border:1px solid #555;border-radius:4px">
-      <button onclick="document.getElementById('saveModal').style.display='none'"
-        style="background:#e94560;color:#fff;border:none;border-radius:6px;padding:7px 24px;cursor:pointer;font-size:13px">
-        ✕ 閉じる
-      </button>
-    `;
-    document.body.appendChild(modal);
-  }
-  document.getElementById('savePreviewImg').src = dataUrl;
-  modal.style.display = 'flex';
-  toast('右クリック →「名前を付けて画像を保存」で保存してください', 5000);
+function saveImg(){
+  const oc=document.createElement('canvas');
+  oc.width=S.W; oc.height=S.H;
+  oc.getContext('2d').drawImage(S.workCanvas,0,0);
+  document.getElementById('savePreviewImg').src=oc.toDataURL('image/png');
+  document.getElementById('saveModal').classList.add('open');
+  toast('右クリック →「名前を付けて画像を保存」で保存できます',5000);
 }
 
 // ─── Mode ───
-function setMode(m) {
+function setMode(m){
   S.mode=m; S.roiStart=null; S.roiEnd=null;
-  ['brush','pick','fill'].forEach(id=>{
-    document.getElementById('btn'+id[0].toUpperCase()+id.slice(1)).classList.toggle('active',id===m);
+  ['Brush','Pick','Fill'].forEach(id=>{
+    document.getElementById('btn'+id).classList.toggle('active',id.toLowerCase()===m);
   });
-  cUI.style.cursor = m==='brush' ? 'none' : 'crosshair';
+  cUI.style.cursor=m==='brush'?'none':'crosshair';
+  const lbl={brush:'🖌 ブラシモード',pick:'🎨 色抽出モード（ドラッグで範囲選択）',fill:'🪣 塗りつぶしモード（ドラッグで範囲選択）'};
+  showModeLabel(lbl[m]);
   renderAll();
 }
-
-function updateSwatch() {
+function updateSwatch(){
   const sw=document.getElementById('swatch');
-  if (S.pickedColor) {
-    const {r,g,b}=S.pickedColor;
-    sw.style.cssText=`display:block;background:rgb(${r},${g},${b})`;
-  } else sw.style.display='none';
+  if(S.pickedColor){const{r,g,b}=S.pickedColor;sw.style.cssText=`display:block;background:rgb(${r},${g},${b})`;document.getElementById('btnPickFill').disabled=false;}
+  else sw.style.display='none';
 }
-
-function updateBtns() {
+function updateBtns(){
   const has=!!S.workCanvas;
-  ['btnSave','btnInpaint','btnPaperFill','btnPickFill','btnReset','btnFit','btn100'].forEach(id=>{
+  ['btnSave','btnInpaint','btnPaperFill','btnPickFill','btnReset','btnFit','btn100','btnBA'].forEach(id=>{
     document.getElementById(id).disabled=!has;
   });
   document.getElementById('btnUndo').disabled=!has||!S.undoStack.length;
 }
 
 // ─── Mouse ───
-cUI.addEventListener('mousedown', e=>{
-  if(!S.workCanvas) return; e.preventDefault();
-  const {offsetX:sx, offsetY:sy}=e;
-
-  if(e.button===1||(e.button===0&&e.shiftKey)){
-    S.panStart={sx,sy,vx:S.vx,vy:S.vy}; return;
-  }
-  const [ix,iy]=s2i(sx,sy);
-
-  if(S.mode!=='brush'){
-    S.roiDrag=true; S.roiStart=[ix,iy]; S.roiEnd=[ix,iy]; return;
-  }
-  pushUndo();
-  S.drawing=true; S.erasing=e.button===2; S.lastPt=[ix,iy];
+cUI.addEventListener('mousedown',e=>{
+  if(!S.workCanvas)return; e.preventDefault();
+  const{offsetX:sx,offsetY:sy}=e;
+  if(e.button===1||(e.button===0&&e.shiftKey)){S.panStart={sx,sy,vx:S.vx,vy:S.vy};return;}
+  const[ix,iy]=s2i(sx,sy);
+  if(S.mode!=='brush'){S.roiDrag=true;S.roiStart=[ix,iy];S.roiEnd=[ix,iy];return;}
+  pushUndo(); S.drawing=true; S.erasing=e.button===2; S.lastPt=[ix,iy];
   paintMask(ix,iy,ix,iy,S.erasing); renderAll();
 });
 
-cUI.addEventListener('mousemove', e=>{
-  if(!S.workCanvas) return;
-  const {offsetX:sx, offsetY:sy}=e;
-  const sc=getScale();
-
-  // ブラシカーソル
+cUI.addEventListener('mousemove',e=>{
+  if(!S.workCanvas)return;
+  const{offsetX:sx,offsetY:sy}=e;
   ctxUI.clearRect(0,0,cUI.width,cUI.height);
   if(S.mode==='brush'){
-    const pr=Math.max(1, S.brushSize*sc);
-    ctxUI.beginPath(); ctxUI.arc(sx,sy,pr,0,Math.PI*2);
-    ctxUI.strokeStyle='rgba(0,255,0,.8)'; ctxUI.lineWidth=1.5; ctxUI.stroke();
+    const pr=Math.max(1,S.brushSize*sc());
+    ctxUI.beginPath();ctxUI.arc(sx,sy,pr,0,Math.PI*2);
+    ctxUI.strokeStyle='rgba(88,166,255,.9)';ctxUI.lineWidth=1.5;ctxUI.stroke();
   }
-  // ROI rect
   if(S.mode!=='brush'&&S.roiStart&&S.roiEnd){
-    const [x0,y0]=i2s(...S.roiStart), [x1,y1]=i2s(...S.roiEnd);
-    ctxUI.strokeStyle=S.mode==='pick'?'#00f0f0':'#f000f0';
-    ctxUI.lineWidth=1.5; ctxUI.setLineDash([5,3]);
-    ctxUI.strokeRect(x0,y0,x1-x0,y1-y0); ctxUI.setLineDash([]);
+    const[x0,y0]=i2s(...S.roiStart),[x1,y1]=i2s(...S.roiEnd);
+    ctxUI.strokeStyle=S.mode==='pick'?'#00f0f0':'#f060f0';
+    ctxUI.lineWidth=1.5;ctxUI.setLineDash([5,3]);
+    ctxUI.strokeRect(x0,y0,x1-x0,y1-y0);ctxUI.setLineDash([]);
   }
-
-  // pan
   if(S.panStart){
-    S.vx=S.panStart.vx-(sx-S.panStart.sx)/sc;
-    S.vy=S.panStart.vy-(sy-S.panStart.sy)/sc;
-    clamp(); renderAll(); return;
+    const s=sc();
+    S.vx=S.panStart.vx-(sx-S.panStart.sx)/s;
+    S.vy=S.panStart.vy-(sy-S.panStart.sy)/s;
+    clamp();renderAll();return;
   }
-  const [ix,iy]=s2i(sx,sy);
-  if(S.roiDrag){ S.roiEnd=[ix,iy]; return; }
-  if(S.drawing&&S.lastPt){
-    paintMask(S.lastPt[0],S.lastPt[1],ix,iy,S.erasing);
-    S.lastPt=[ix,iy]; renderAll();
-  }
+  const[ix,iy]=s2i(sx,sy);
+  if(S.roiDrag){S.roiEnd=[ix,iy];return;}
+  if(S.drawing&&S.lastPt){paintMask(S.lastPt[0],S.lastPt[1],ix,iy,S.erasing);S.lastPt=[ix,iy];renderAll();}
 });
 
-cUI.addEventListener('mouseup', e=>{
-  if(!S.workCanvas) return;
-  const [ix,iy]=s2i(e.offsetX,e.offsetY);
+cUI.addEventListener('mouseup',e=>{
+  if(!S.workCanvas)return;
+  const[ix,iy]=s2i(e.offsetX,e.offsetY);
   if(S.panStart){S.panStart=null;return;}
   if(S.roiDrag){
-    S.roiDrag=false; S.roiEnd=[ix,iy];
-    if(S.mode==='pick') pickColor();
-    else if(S.mode==='fill') fillROI();
-    renderAll(); return;
+    S.roiDrag=false;S.roiEnd=[ix,iy];
+    if(S.mode==='pick')pickColor();
+    else if(S.mode==='fill')fillROI();
+    renderAll();return;
   }
-  S.drawing=false; S.lastPt=null;
+  S.drawing=false;S.lastPt=null;
 });
-
-cUI.addEventListener('mouseleave',()=>{
-  S.drawing=false; S.lastPt=null;
-  ctxUI.clearRect(0,0,cUI.width,cUI.height);
-});
-
-cUI.addEventListener('wheel',e=>{
-  e.preventDefault();
-  if(!S.workCanvas) return;
-  zoomAt(e.offsetX,e.offsetY,e.deltaY<0?1.2:1/1.2);
-  renderAll();
-},{passive:false});
-
+cUI.addEventListener('mouseleave',()=>{S.drawing=false;S.lastPt=null;ctxUI.clearRect(0,0,cUI.width,cUI.height);});
+cUI.addEventListener('wheel',e=>{e.preventDefault();if(!S.workCanvas)return;zoomAt(e.offsetX,e.offsetY,e.deltaY<0?1.2:1/1.2);renderAll();},{passive:false});
 cUI.addEventListener('contextmenu',e=>e.preventDefault());
 
 // ─── Keyboard ───
 document.addEventListener('keydown',e=>{
-  if(!S.workCanvas||e.target.tagName==='INPUT') return;
-  if((e.key==='z'||e.key==='u')&&(e.ctrlKey||e.metaKey||e.key==='u')){e.preventDefault();undo();return;}
+  if(!S.workCanvas||e.target.tagName==='INPUT')return;
+  if((e.key==='z')&&(e.ctrlKey||e.metaKey)){e.preventDefault();undo();return;}
   if(e.key==='s'&&(e.ctrlKey||e.metaKey)){e.preventDefault();saveImg();return;}
   switch(e.key){
-    case 'b':setMode('brush');break;
-    case 'p':setMode('pick');break;
-    case 'g':setMode('fill');break;
-    case 'i':doInpaint();break;
-    case 'Enter':applyInpaint();break;
-    case 'f':fillPaper();break;
-    case 'k':fillPicked();break;
-    case 'r':S.mask.fill(0);S.previewData=null;S.undoStack=[];renderAll();updateBtns();break;
+    case 'b':setMode('brush');break; case 'p':setMode('pick');break; case 'g':setMode('fill');break;
+    case 'i':doInpaint();break; case 'Enter':applyInpaint();break;
+    case 'f':fillPaper();break; case 'k':fillPicked();break;
+    case 'u':undo();break;
+    case 'r':pushUndo();S.mask.fill(0);S.previewData=null;renderAll();break;
+    case 'ArrowLeft': S.vx=Math.max(0,S.vx-20/S.zoom);renderAll();break;
+    case 'ArrowRight':S.vx=Math.min(Math.max(0,S.W-wrap.clientWidth/S.zoom),S.vx+20/S.zoom);renderAll();break;
+    case 'ArrowUp':   S.vy=Math.max(0,S.vy-20/S.zoom);renderAll();break;
+    case 'ArrowDown': S.vy=Math.min(Math.max(0,S.H-wrap.clientHeight/S.zoom),S.vy+20/S.zoom);renderAll();break;
     case '0':fitView();renderAll();break;
     case '1':S.zoom=1;S.vx=0;S.vy=0;renderAll();break;
-    case 'm':
-      S.ipMethod=S.ipMethod==='telea'?'ns':'telea';
-      document.getElementById('btnMethod').textContent=S.ipMethod.toUpperCase();
-      S.previewData=null; break;
-    case '[':S.brushSize=Math.max(2,S.brushSize-2);
-      document.getElementById('slBrush').value=S.brushSize;
-      document.getElementById('vBrush').textContent=S.brushSize;break;
-    case ']':S.brushSize=Math.min(120,S.brushSize+2);
-      document.getElementById('slBrush').value=S.brushSize;
-      document.getElementById('vBrush').textContent=S.brushSize;break;
+    case 'm':S.ipMethod=S.ipMethod==='telea'?'ns':'telea';document.getElementById('btnMethod').textContent=S.ipMethod.toUpperCase();S.previewData=null;break;
+    case '[':S.brushSize=Math.max(2,S.brushSize-2);document.getElementById('slBrush').value=S.brushSize;document.getElementById('vBrush').textContent=S.brushSize;break;
+    case ']':S.brushSize=Math.min(120,S.brushSize+2);document.getElementById('slBrush').value=S.brushSize;document.getElementById('vBrush').textContent=S.brushSize;break;
   }
 });
 
-// ─── Controls ───
+// ─── Bindings ───
 document.getElementById('btnOpen').onclick=
 document.getElementById('btnOpen2').onclick=()=>document.getElementById('fileInput').click();
-
-document.getElementById('fileInput').onchange=e=>{
-  const f=e.target.files[0]; if(f) loadFile(f);
-  e.target.value=''; // 同じファイルを再選択できるようリセット
-};
-
+document.getElementById('fileInput').onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0]);e.target.value='';};
 document.getElementById('btnSave').onclick=saveImg;
 document.getElementById('btnBrush').onclick=()=>setMode('brush');
 document.getElementById('btnPick').onclick=()=>setMode('pick');
@@ -637,36 +761,28 @@ document.getElementById('btnInpaint').onclick=doInpaint;
 document.getElementById('btnPaperFill').onclick=fillPaper;
 document.getElementById('btnPickFill').onclick=fillPicked;
 document.getElementById('btnUndo').onclick=undo;
-document.getElementById('btnReset').onclick=()=>{
-  pushUndo(); S.mask.fill(0); S.previewData=null; renderAll();
-};
+document.getElementById('btnReset').onclick=()=>{pushUndo();S.mask.fill(0);S.previewData=null;renderAll();};
 document.getElementById('btnFit').onclick=()=>{fitView();renderAll();};
 document.getElementById('btn100').onclick=()=>{S.zoom=1;S.vx=0;S.vy=0;renderAll();};
+document.getElementById('btnBA').onclick=()=>{
+  S.baOpen=!S.baOpen;
+  document.getElementById('baPanel').classList.toggle('open',S.baOpen);
+  document.getElementById('btnBA').classList.toggle('active',S.baOpen);
+  if(S.baOpen)updateBA();
+};
 document.getElementById('btnMethod').onclick=()=>{
   S.ipMethod=S.ipMethod==='telea'?'ns':'telea';
   document.getElementById('btnMethod').textContent=S.ipMethod.toUpperCase();
   S.previewData=null;
 };
-
-document.getElementById('slBrush').oninput=e=>{
-  S.brushSize=+e.target.value;
-  document.getElementById('vBrush').textContent=S.brushSize;
-};
-document.getElementById('slRadius').oninput=e=>{
-  S.ipRadius=+e.target.value;
-  document.getElementById('vRadius').textContent=S.ipRadius;
-  S.previewData=null;
-};
+document.getElementById('slBrush').oninput=e=>{S.brushSize=+e.target.value;document.getElementById('vBrush').textContent=S.brushSize;};
+document.getElementById('slRadius').oninput=e=>{S.ipRadius=+e.target.value;document.getElementById('vRadius').textContent=S.ipRadius;S.previewData=null;};
 
 // ─── Drag & Drop ───
 const dz=document.getElementById('dropzone');
-wrap.addEventListener('dragover',e=>{e.preventDefault();dz.style.background='rgba(14,52,160,.9)';});
-wrap.addEventListener('dragleave',()=>{dz.style.background='';});
-wrap.addEventListener('drop',e=>{
-  e.preventDefault(); dz.style.background='';
-  const f=e.dataTransfer.files[0];
-  if(f&&f.type.startsWith('image/')) loadFile(f);
-});
+wrap.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--accent)';});
+wrap.addEventListener('dragleave',()=>{dz.style.borderColor='';});
+wrap.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadFile(f);});
 
 window.addEventListener('resize',()=>{if(S.workCanvas)renderAll();});
 </script>
