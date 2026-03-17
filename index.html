@@ -160,11 +160,12 @@ input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
 #baPanel {
   width: 0; overflow: hidden; transition: width .3s; background: var(--bg2);
   border-left: 1px solid var(--border); display: flex; flex-direction: column;
-  align-items: center; padding: 0; gap: 0;
+  align-items: stretch; padding: 0; gap: 0;
 }
-#baPanel.open { width: 220px; padding: 12px 10px; gap: 10px; }
+#baPanel.open { width: 340px; padding: 12px 12px; gap: 10px; overflow-y: auto; }
+.ba-block { display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .ba-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
-.ba-canvas { width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #000; }
+.ba-canvas { width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #000; display: block; }
 
 #dropzone {
   position: absolute; inset: 0; z-index: 10;
@@ -361,10 +362,14 @@ input[type=range] { width: 68px; accent-color: var(--accent); cursor: pointer; }
       </div>
     </div>
     <div id="baPanel">
-      <div class="ba-label">Before</div>
-      <canvas class="ba-canvas" id="cBefore"></canvas>
-      <div class="ba-label">After</div>
-      <canvas class="ba-canvas" id="cAfter"></canvas>
+      <div class="ba-block">
+        <div class="ba-label">Before</div>
+        <canvas class="ba-canvas" id="cBefore"></canvas>
+      </div>
+      <div class="ba-block">
+        <div class="ba-label">After</div>
+        <canvas class="ba-canvas" id="cAfter"></canvas>
+      </div>
     </div>
   </div>
 </div>
@@ -524,11 +529,13 @@ function maskCanvas() {
 
 // ─── Before/After ───
 function updateBA() {
-  const tw = cBefore.parentElement.clientWidth - 20;
+  const panel = document.getElementById('baPanel');
+  const tw = panel.clientWidth - 24;
+  if (tw <= 0) return;
   const th = Math.round(tw * S.H / S.W);
-  [cBefore,cAfter].forEach(c=>{c.width=tw;c.height=th;});
-  cBefore.getContext('2d').drawImage(S.origCanvas,0,0,tw,th);
-  cAfter.getContext('2d').drawImage(S.workCanvas,0,0,tw,th);
+  [cBefore, cAfter].forEach(c => { c.width = tw; c.height = th; });
+  cBefore.getContext('2d').drawImage(S.origCanvas, 0, 0, tw, th);
+  cAfter.getContext('2d').drawImage(S.workCanvas, 0, 0, tw, th);
 }
 
 // ─── Undo ───
