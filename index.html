@@ -766,9 +766,13 @@ document.getElementById('btnFit').onclick=()=>{fitView();renderAll();};
 document.getElementById('btn100').onclick=()=>{S.zoom=1;S.vx=0;S.vy=0;renderAll();};
 document.getElementById('btnBA').onclick=()=>{
   S.baOpen=!S.baOpen;
-  document.getElementById('baPanel').classList.toggle('open',S.baOpen);
+  const panel=document.getElementById('baPanel');
+  panel.classList.toggle('open',S.baOpen);
   document.getElementById('btnBA').classList.toggle('active',S.baOpen);
-  if(S.baOpen)updateBA();
+  if(S.baOpen){
+    // トランジション(0.3s)完了後に描画
+    setTimeout(()=>updateBA(), 320);
+  }
 };
 document.getElementById('btnMethod').onclick=()=>{
   S.ipMethod=S.ipMethod==='telea'?'ns':'telea';
